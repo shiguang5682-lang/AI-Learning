@@ -1,5 +1,17 @@
 from src.llm import chat 
 
-answer = chat("请用一句话介绍人工智能")
+from src.exceptions import LLMError
 
-print(answer)
+messages =[
+    {
+
+        "role":"user",
+        "content":"请用一句话介绍Agent"
+
+    }
+]
+try:
+    answer = chat(messages)
+    print(answer)
+except LLMError as e:
+    print(f"Error: {e}")
