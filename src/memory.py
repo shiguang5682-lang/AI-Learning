@@ -1,7 +1,7 @@
 from src.models.chat_message import ChatMessage
 
 class ConversationMemory:
-    """保存聊天历史"""
+    """保存的是当前会话状态,而不是聊天历史,LLM依赖会话记录"""
     
     def __init__(self) -> None:
         self._messages: list[ChatMessage] = []
