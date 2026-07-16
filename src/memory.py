@@ -22,6 +22,13 @@ class ConversationMemory:
         """获取聊天历史"""
         return self._messages.copy()
     
+    def get_recent_messages(self, max_messages: int) -> list[ChatMessage]:
+        if max_messages <= 0:
+            raise ValueError("max_messages must be greater than 0")
+
+        return self._messages[-max_messages:]
+
+    
     def clear(self) -> None:
         """清空聊天历史"""
         self._messages.clear()
