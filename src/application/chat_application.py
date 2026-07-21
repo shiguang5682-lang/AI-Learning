@@ -6,10 +6,24 @@ from src.prompt import build_messages
 
 from src.memory import ConversationMemory
 
+from src.models.chat_message import ChatMessage
+
 
 class ChatApplication:
-    def __init__(self):
+    def __init__(self,
+                 max_context_messages: int = 10,
+                 ) -> None:
         self.memory = ConversationMemory()
+        self._max_context_messages = max_context_messages
+
+    def _build_messages_for_user_input(self, 
+                                       user_input:str,
+                                       ) -> list[ChatMessage]:
+
+        self.memory.add_user_message(user_input)
+        recent_messages = self.memory.get_recent_messages(self._max_context_messages)
+
+        return build_messages(recent_messages)
     
     def run(self):
         while True:
@@ -25,11 +39,10 @@ class ChatApplication:
             
 
 
-    def chat(self, user_input:str)-> str:
+    def chat(self, user_input:str) -> str:
         """处理一轮对话,返回模型回复"""
-        self.memory.add_user_message(user_input)
+        messages = self._build_messages_for_user_input(user_input)
         
-        messages = build_messages(self.memory.get_messages())
         answer = chat(messages)
  
         
@@ -39,11 +52,11 @@ class ChatApplication:
     
     def stream_chat(self, user_input: str) -> str:
         """处理一轮对话,并以流式方式输出模型回复"""
-        self.memory.add_user_message(user_input)
-        
-        messages = build_messages(self.memory.get_messages())
 
-        chunks:list[str] = []
+        
+        messages = self._build_messages_for_user_input(user_input)
+
+        chunks: list[str] = []
 
         print("AI:", end="", flush=True)
         stream_response = stream_chat(messages)
